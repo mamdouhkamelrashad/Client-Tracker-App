@@ -1,0 +1,266 @@
+:root {
+    --body-bg: #f8f9fa;
+    --navbar-bg: #2c3e50;
+    --navbar-color: #ecf0f1;
+    --dropdown-bg: #34495e;
+    --dropdown-hover: #495e74;
+    --card-bg: #ffffff;
+    --card-hover-bg: #f1f3f5;
+    --text-color: #343a3f;
+    --header-color: #2c3e50;
+    --border-color: #e9ecef;
+    --completed-bg: #d1e7dd;
+    --completed-border: #198754;
+    --visit-item-bg: #e9ecef;
+    --primary-color: #0d6efd;
+    --info-color: #0dcaf0;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --secondary-color: #6c757d;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --chart-bg: #ffffff;
+}
+
+body.dark-mode {
+    --body-bg: #212529;
+    --navbar-bg: #343a40;
+    --navbar-color: #f8f9fa;
+    --dropdown-bg: #495057;
+    --dropdown-hover: #6c757d;
+    --card-bg: #2c3e50;
+    --card-hover-bg: #34495e;
+    --text-color: #f8f9fa;
+    --header-color: #f8f9fa;
+    --border-color: #495057;
+    --completed-bg: #2d4134;
+    --completed-border: #198754;
+    --visit-item-bg: #495057;
+    --primary-color: #0d6efd;
+    --info-color: #0dcaf0;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --secondary-color: #6c757d;
+    --shadow-color: rgba(255, 255, 255, 0.08);
+    --chart-bg: #2c3e50;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    margin: 0;
+    padding-top: 70px; /* Space for the fixed navbar */
+}
+
+.navbar {
+    background-color: var(--navbar-bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 1030;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    color: var(--navbar-color);
+}
+.navbar-brand:hover, .navbar-nav .nav-link:hover {
+    color: #bdc3c7;
+}
+
+.dropdown-menu {
+    background-color: var(--dropdown-bg);
+    border: none;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+.dropdown-menu .dropdown-item {
+    color: var(--navbar-color);
+    transition: background-color 0.2s ease;
+}
+.dropdown-menu .dropdown-item:hover, .dropdown-menu .dropdown-item.active {
+    background-color: var(--dropdown-hover);
+}
+
+.main-content {
+    padding: 20px;
+}
+
+.page-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+.page-content.active {
+    display: block;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border: none;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: all 0.3s ease;
+    position: relative;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px var(--shadow-color);
+}
+.card.completed {
+    background-color: var(--completed-bg);
+    border-left: 5px solid var(--completed-border);
+}
+.card-body p i {
+    width: 20px;
+    margin-left: 5px;
+    color: var(--secondary-color);
+}
+.visit-history li {
+    background-color: var(--visit-item-bg);
+    border-left: 4px solid;
+    color: var(--text-color);
+    transition: background-color 0.3s ease;
+}
+.visit-history li.support { border-color: var(--primary-color); }
+.visit-history li.training { border-color: var(--success-color); }
+.visit-history li.issue { border-color: var(--danger-color); }
+.visit-history li.resolved { border-color: var(--warning-color); }
+
+.form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    border-color: #86b7fe;
+}
+
+.flatpickr-calendar {
+    direction: ltr;
+}
+
+#report-output {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+#report-output .list-group-item {
+    background-color: var(--visit-item-bg);
+}
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+}
+
+#loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.chart-container {
+    background-color: var(--chart-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.dark-mode-switch-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+/* New styles for collapsible region cards */
+.region-card-header {
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+    background-color: var(--visit-item-bg);
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.region-card-header:hover {
+    background-color: var(--card-hover-bg);
+}
+.region-card-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--header-color);
+}
+.region-card-header i {
+    transition: transform 0.3s ease;
+}
+.region-card-header[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+.region-card-body {
+    padding: 10px 0;
+}
+
+.client-item-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-left: 5px solid var(--primary-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.client-item-card:hover {
+    transform: translateY(-3px);
+    background-color: var(--card-hover-bg);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.client-item-card .card-body {
+    padding: 1rem;
+}
+
+/* New styles for visits planner client selection */
+.planner-client-list-container {
+    max-height: 600px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: var(--card-bg);
+}
+.planner-region-group {
+    margin-bottom: 1.5rem;
+}
+.planner-region-header {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: var(--header-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.planner-region-header[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+.planner-client-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+.planner-client-item input[type="checkbox"] {
+    margin-left: 10px;
+    cursor: pointer;
+}
+.planner-client-item label {
+    flex-grow: 1;
+}

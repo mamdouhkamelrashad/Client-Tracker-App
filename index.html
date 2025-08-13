@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق متابعة العملاء - تقارير ذكية</title>
+
+    <meta name="theme-color" content="#2c3e50">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">تطبيق المتابعة</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> اللوحة الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="clients"><i class="fas fa-users"></i> إدارة العملاء</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="visits-planner"><i class="fas fa-route"></i> مخطط الزيارات</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="reports"><i class="fas fa-chart-line"></i> التقارير</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-page="data-management"><i class="fas fa-database"></i> إدارة البيانات</a>
+                    </li>
+                    <li class="nav-item dropdown d-lg-none">
+                        <div class="dark-mode-switch-container">
+                            <input class="form-check-input" type="checkbox" role="switch" id="darkModeSwitchMobile">
+                            <label class="form-check-label me-2" for="darkModeSwitchMobile"><i class="fas fa-moon"></i> الوضع الداكن</label>
+                        </div>
+                    </li>
+                </ul>
+                <div class="d-none d-lg-block">
+                    <div class="form-check form-switch dark-mode-switch-container">
+                        <input class="form-check-input" type="checkbox" role="switch" id="darkModeSwitchDesktop">
+                        <label class="form-check-label me-2" for="darkModeSwitchDesktop"><i class="fas fa-moon"></i> الوضع الداكن</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="main-content" id="main-content">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+            <h1 id="page-title">اللوحة الرئيسية</h1>
+        </header>
+        
+        <div id="dashboard-page" class="page-content active animate__animated animate__fadeIn">
+            <div class="row text-center mb-5" id="dashboard">
+                <div class="col-md-4 mb-3">
+                    <div class="dashboard-card card bg-primary text-white">
+                        <div class="card-body">
+                            <h3 id="totalClientsCount">0</h3>
+                            <p class="mb-0">إجمالي العملاء</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="dashboard-card card bg-success text-white">
+                        <div class="card-body">
+                            <h3 id="completedClientsCount">0</h3>
+                            <p class="mb-0">عملاء مكتملة زياراتهم</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="dashboard-card card bg-warning text-white">
+                        <div class="card-body">
+                            <h3 id="pendingClientsCount">0</h3>
+                            <p class="mb-0">عملاء بزيارات معلقة</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="chart-container">
+                        <h5 class="text-center mb-3">توزيع العملاء حسب المنطقة</h5>
+                        <canvas id="regionsChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="chart-container">
+                        <h5 class="text-center mb-3">حالة العملاء</h5>
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card p-3">
+                        <h5 class="text-center mb-3">ملخص آخر الزيارات</h5>
+                        <ul id="latestVisitsList" class="list-group list-group-flush">
+                            <li class="list-group-item text-center text-muted">لا توجد زيارات حديثة.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="clients-page" class="page-content animate__animated animate__fadeIn">
+            <div class="add-client mb-5 p-3 rounded shadow-sm bg-white">
+                <h2 class="text-center mb-4 text-primary"><i class="fas fa-plus-circle"></i> إضافة عميل جديد</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="clientName" class="form-label">اسم العميل:</label>
+                        <input type="text" id="clientName" class="form-control" placeholder="أدخل اسم العميل" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="branchName" class="form-label">اسم الفرع:</label>
+                        <input type="text" id="branchName" class="form-control" placeholder="أدخل اسم الفرع" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="clientAddress" class="form-label">عنوان العميل:</label>
+                        <input type="text" id="clientAddress" class="form-control" placeholder="أدخل العنوان التفصيلي" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="clientRegion" class="form-label">المنطقة:</label>
+                        <select id="clientRegion" class="form-select selectpicker" data-live-search="true" title="اختر منطقة..." required>
+                            </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="clientMapLink" class="form-label">رابط Google Maps (اختياري):</label>
+                        <input type="url" id="clientMapLink" class="form-control" placeholder="الصق رابط الخريطة...">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="clientPhone" class="form-label">رقم الهاتف (اختياري):</label>
+                        <input type="tel" id="clientPhone" class="form-control" placeholder="أدخل رقم الهاتف...">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="clientEmail" class="form-label">البريد الإلكتروني (اختياري):</label>
+                        <input type="email" id="clientEmail" class="form-control" placeholder="أدخل البريد الإلكتروني...">
+                    </div>
+                    <div class="col-md-6 mb-3 d-flex align-items-end">
+                        <button id="addClientBtn" class="btn btn-primary w-100"><i class="fas fa-user-plus"></i> إضافة عميل</button>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-clients mb-4 p-3 rounded shadow-sm bg-white">
+                <h2 class="text-center mb-4 text-info"><i class="fas fa-filter"></i> تصفية وعرض العملاء</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="region-filter" class="form-label">تصفية حسب المنطقة:</label>
+                        <select id="region-filter" class="form-select selectpicker" data-live-search="true" multiple title="اختر منطقة أو أكثر..." data-actions-box="true">
+                            </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="searchClientInput" class="form-label">البحث عن عميل:</label>
+                        <div class="input-group">
+                            <input type="text" id="searchClientInput" class="form-control" placeholder="ابحث بالاسم أو الفرع أو العنوان">
+                            <button id="searchClientBtn" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="clients-list" class="row">
+                </div>
+        </div>
+
+        <div id="visits-planner-page" class="page-content animate__animated animate__fadeIn">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card p-3">
+                        <h2 class="text-center mb-4 text-primary"><i class="fas fa-route"></i> مخطط الزيارات</h2>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="planner-region-select" class="form-label">اختر المناطق:</label>
+                                <select id="planner-region-select" class="form-select selectpicker" data-live-search="true" multiple title="اختر منطقة أو أكثر..." data-actions-box="true" data-select-all-text="اختيار الكل" data-deselect-all-text="إلغاء الكل">
+                                    </select>
+                            </div>
+                        </div>
+                        <div class="mt-4" id="planner-client-list-container">
+                            </div>
+                        <div class="d-grid gap-2 mt-3">
+                            <button id="generateMultiRouteBtn" class="btn btn-info"><i class="fas fa-route"></i> إنشاء رابط مسار مجمع</button>
+                            <button id="generateLinksBtn" class="btn btn-primary"><i class="fas fa-link"></i> إنشاء روابط فردية</button>
+                        </div>
+                        <div class="mt-4" id="generatedLinksContainer">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="reports-page" class="page-content animate__animated animate__fadeIn">
+            <h2 class="text-center mb-4 text-success"><i class="fas fa-chart-line"></i> التقارير</h2>
+            <div class="card p-3 mb-4">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="report-period" class="form-label">الفترة:</label>
+                        <select id="report-period" class="form-select">
+                            <option value="weekly">أسبوعي</option>
+                            <option value="monthly" selected>شهري</option>
+                            <option value="all">شامل</option>
+                            <option value="custom">تاريخ مخصص</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex" id="custom-date-fields" style="display: none;">
+                        <div class="me-2 flex-grow-1">
+                            <label for="start-date" class="form-label">من:</label>
+                            <input type="text" id="start-date" class="form-control" placeholder="تاريخ البداية">
+                        </div>
+                        <div class="flex-grow-1">
+                            <label for="end-date" class="form-label">إلى:</label>
+                            <input type="text" id="end-date" class="form-control" placeholder="تاريخ النهاية">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="report-client-filter" class="form-label">تصفية حسب العميل:</label>
+                        <select id="report-client-filter" class="form-select selectpicker" data-live-search="true" title="اختر عميلًا..." data-none-selected-text="كل العملاء">
+                            </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="report-region-filter" class="form-label">تصفية حسب المنطقة:</label>
+                        <select id="report-region-filter" class="form-select selectpicker" data-live-search="true" multiple title="اختر منطقة أو أكثر..." data-actions-box="true" data-select-all-text="اختيار الكل" data-deselect-all-text="إلغاء الكل">
+                            </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="report-type-filter" class="form-label">تصفية حسب نوع الزيارة:</label>
+                        <select id="report-type-filter" class="form-select selectpicker" data-live-search="true" multiple title="اختر نوعًا أو أكثر..." data-actions-box="true" data-select-all-text="اختيار الكل" data-deselect-all-text="إلغاء الكل">
+                            <option value="support">دعم فني</option>
+                            <option value="training">تدريب</option>
+                            <option value="issue">مشكلة</option>
+                            <option value="resolved">تم حلها</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end mt-3">
+                        <button id="exportReportBtn" class="btn btn-success w-100"><i class="fas fa-file-excel"></i> تصدير إلى Excel</button>
+                    </div>
+                </div>
+            </div>
+            <div id="report-output" class="card p-3">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th>المنطقة</th>
+                            <th>تاريخ الزيارة</th>
+                            <th>نوع الزيارة</th>
+                            <th>ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="report-table-body">
+                        <tr><td colspan="5" class="text-center text-muted">لا يوجد تقرير لعرضه.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="data-management-page" class="page-content animate__animated animate__fadeIn">
+            <h2 class="text-center mb-4 text-secondary"><i class="fas fa-database"></i> إدارة البيانات</h2>
+            <div class="card p-3 mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="excelFileInput" class="form-label">استيراد بيانات العملاء من ملف Excel</label>
+                        <input class="form-control" type="file" id="excelFileInput" accept=".xlsx, .xls">
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button id="importExcelBtn" class="btn btn-secondary w-100"><i class="fas fa-file-import"></i> استيراد</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-3 mb-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="mb-0">تصدير بيانات العملاء الحالية إلى Excel</p>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button id="exportExcelBtn" class="btn btn-success w-100"><i class="fas fa-file-export"></i> تصدير</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="mb-0 text-danger">مسح جميع بيانات العملاء والزيارات</p>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button id="clearAllDataBtn" class="btn btn-danger w-100"><i class="fas fa-trash-alt"></i> مسح كل شيء</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="clientDetailsModal" tabindex="-1" aria-labelledby="clientDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientDetailsModalLabel">تفاصيل العميل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> معلومات العميل</h6>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item"><i class="fas fa-user me-2"></i> <strong>الاسم:</strong> <span id="detailsClientName"></span></li>
+                                <li class="list-group-item"><i class="fas fa-code-branch me-2"></i> <strong>الفرع:</strong> <span id="detailsBranchName"></span></li>
+                                <li class="list-group-item"><i class="fas fa-map-marker-alt me-2"></i> <strong>العنوان:</strong> <span id="detailsAddress"></span></li>
+                                <li class="list-group-item"><i class="fas fa-globe me-2"></i> <strong>المنطقة:</strong> <span id="detailsRegion"></span></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-info"><i class="fas fa-id-card"></i> معلومات الاتصال</h6>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item"><i class="fas fa-phone me-2"></i> <strong>الهاتف:</strong> <span id="detailsPhone"></span> <a href="#" id="phoneLink" class="btn btn-sm btn-info me-2 d-none"><i class="fas fa-phone-alt"></i> اتصال</a></li>
+                                <li class="list-group-item"><i class="fas fa-envelope me-2"></i> <strong>البريد:</strong> <span id="detailsEmail"></span> <a href="#" id="emailLink" class="btn btn-sm btn-info me-2 d-none"><i class="fas fa-envelope"></i> إرسال</a></li>
+                                <li class="list-group-item" id="mapLinkItem" style="display: none;">
+                                    <i class="fas fa-map-pin me-2"></i> <strong>الموقع:</strong> <a href="#" id="detailsMapLink" target="_blank" class="btn btn-sm btn-primary"><i class="fas fa-location-arrow"></i> فتح في جوجل ماب</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <h6 class="text-warning"><i class="fas fa-chart-bar"></i> ملخص الزيارات</h6>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item"><i class="fas fa-list-ol me-2"></i> <strong>عدد الزيارات:</strong> <span id="summaryTotalVisits">0</span></li>
+                                <li class="list-group-item"><i class="fas fa-calendar-check me-2"></i> <strong>آخر زيارة:</strong> <span id="summaryLastVisit">لا توجد</span></li>
+                                <li class="list-group-item"><i class="fas fa-clipboard-list me-2"></i> <strong>أنواع الزيارات:</strong> <span id="summaryVisitTypes">لا توجد</span></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <h6 class="text-success"><i class="fas fa-history"></i> سجل الزيارات</h6>
+                            <ul class="list-group list-group-flush" id="detailsVisitHistory">
+                                <li class="list-group-item text-center text-muted">لا توجد زيارات سابقة.</li>
+                            </ul>
+                            <div class="mt-3 d-flex justify-content-between">
+                                <button class="btn btn-success flex-grow-1 me-2" data-bs-toggle="modal" data-bs-target="#addVisitModal" id="openAddVisitModalBtn"><i class="fas fa-plus"></i> إضافة زيارة جديدة</button>
+                                <button class="btn btn-warning" id="editClientBtnModal" data-tippy-content="تعديل بيانات العميل"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger me-2" id="deleteClientBtnModal" data-tippy-content="حذف العميل"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="addVisitModal" tabindex="-1" aria-labelledby="addVisitModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addVisitModalLabel">إضافة زيارة لـ <span id="addVisitClientName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="addVisitClientId">
+                    <div class="mb-3">
+                        <label for="visitDate" class="form-label">تاريخ الزيارة:</label>
+                        <input type="text" id="visitDate" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="visitType" class="form-label">نوع الزيارة:</label>
+                        <select id="visitType" class="form-select" required>
+                            <option value="">اختر نوعًا...</option>
+                            <option value="support">دعم فني</option>
+                            <option value="training">تدريب</option>
+                            <option value="issue">مشكلة</option>
+                            <option value="resolved">تم حلها</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="visitNotes" class="form-label">ملاحظات:</label>
+                        <textarea id="visitNotes" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="saveVisitBtn">حفظ الزيارة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editClientModalLabel">تعديل بيانات العميل</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editClientId">
+                    <div class="mb-3">
+                        <label for="editClientName" class="form-label">اسم العميل:</label>
+                        <input type="text" id="editClientName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBranchName" class="form-label">اسم الفرع:</label>
+                        <input type="text" id="editBranchName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientAddress" class="form-label">العنوان:</label>
+                        <input type="text" id="editClientAddress" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientRegion" class="form-label">المنطقة:</label>
+                        <select id="editClientRegion" class="form-select selectpicker" data-live-search="true" title="اختر منطقة..." required>
+                            </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientMapLink" class="form-label">رابط Google Maps (اختياري):</label>
+                        <input type="url" id="editClientMapLink" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientPhone" class="form-label">رقم الهاتف (اختياري):</label>
+                        <input type="tel" id="editClientPhone" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientEmail" class="form-label">البريد الإلكتروني (اختياري):</label>
+                        <input type="email" id="editClientEmail" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="updateClientBtn">حفظ التغييرات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="hidden">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3" id="loading-message">يتم تحميل البيانات...</p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
